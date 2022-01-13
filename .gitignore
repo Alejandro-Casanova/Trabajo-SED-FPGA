@@ -6,7 +6,6 @@
 #Exclude all
 #########
 *
-Trabajo Final.cache/*
 !*/
 !.gitignore
 ###########################################################################
@@ -90,3 +89,7 @@ Trabajo Final.cache/*
 !*.elf
 !*.bmm
 !*.xmp
+##############
+#Modifications
+##############
+Trabajo Final.ip_user_files/*
