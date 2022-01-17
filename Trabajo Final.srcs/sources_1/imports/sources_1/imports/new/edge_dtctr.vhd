@@ -38,7 +38,7 @@ entity edge_dtctr is
 end edge_dtctr;
 
 architecture Behavioral of edge_dtctr is
-    signal sreg : std_logic_vector(2 downto 0);
+    signal sreg : std_logic_vector(2 downto 0) := (others => '0');
 begin
     process (CLK)
     begin

@@ -49,7 +49,7 @@ architecture Behavioral of tb_uart_tx is
     end component uart_tx;
     
     component uart_rx is
-        generic (g_CLK_Freq : integer := 10000000;
+        generic (g_CLK_Freq : integer := 100000000;
                  g_UART_Baud_Rate : integer := 115200
         );
         Port ( i_CLK            : in STD_LOGIC;
@@ -59,10 +59,10 @@ architecture Behavioral of tb_uart_tx is
                );
     end component uart_rx;
     
-    constant c_CLK_FREQ : integer := 10000000;
+    constant c_CLK_FREQ : integer := 100000000;
     constant c_UART_BAUD_RATE : integer := 115200;
     constant c_BIT_PERIOD : time := 8680 ns; -- (1 / c_UART_BAUD_RATE)
-    constant c_CLK_PERIOD : time := 100 ns;
+    constant c_CLK_PERIOD : time := 10 ns;
     
     signal r_CLOCK          : std_logic := '0';
     signal w_RX_DONE        : std_logic;
@@ -106,7 +106,7 @@ begin
             o_RX_PARALLEL   => w_RX_PARALLEL
         );
     
-    r_CLOCK <= not r_CLOCK after 50 ns; -- Clk signal for 10 MHz
+    r_CLOCK <= not r_CLOCK after 5 ns; -- Clk signal for 10 MHz
     r_RX_SERIAL <= w_TX_SERIAL; -- Connect Serial Lines
     
     stimuli : process 

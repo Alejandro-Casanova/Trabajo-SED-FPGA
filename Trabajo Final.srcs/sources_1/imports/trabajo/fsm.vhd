@@ -46,11 +46,16 @@ architecture behavioral of fsm is
     type STATES is (S0, S1, S2, S3); -- Arriba, Derecha, Abajo, Izquierda
     signal current_state: STATES := S0; --empieza hacia arriba
     signal next_state: STATES; 
-    --signal s_TURN_L: std_logic := '0';
-    --signal s_TURN_R: std_logic := '0';
+    signal s_TURN_L : std_logic := '0';
+    signal s_TURN_R : std_logic := '0';
+    signal s_LED : std_logic_vector(3 downto 0) := (others => '0');
     
 begin 
-              
+    
+    TURN_R <= s_TURN_R;
+    TURN_L <= s_TURN_L;
+    LED <= s_LED;
+          
     state_register: process (RESET_N, CLK) 
     begin 
         if RESET_N = '0' then
@@ -118,27 +123,31 @@ begin
     output_decod : process (current_state, PUSHBUTTON, RESET_N) -- Mealy 
     begin
     if RESET_N = '0' then
-        TURN_R <= '0'; 
-        TURN_L <= '0';
-        LED <= "0001";
+        s_TURN_R <= '0'; 
+        s_TURN_L <= '0';
+        s_LED <= "0001";
     else
         case current_state is
             when S0 => -- UP
-                TURN_R <= PUSHBUTTON(1); 
-                TURN_L <= PUSHBUTTON(3);
-                LED <= "0001";
+                s_TURN_R <= PUSHBUTTON(1); 
+                s_TURN_L <= PUSHBUTTON(3);
+                s_LED <= "0001";
             when S1 => -- Right
-                TURN_R <= PUSHBUTTON(2); 
-                TURN_L <= PUSHBUTTON(0);
-                LED <= "0010";
+                s_TURN_R <= PUSHBUTTON(2); 
+                s_TURN_L <= PUSHBUTTON(0);
+                s_LED <= "0010";
             when S2 => -- Down
-                TURN_R <= PUSHBUTTON(3); 
-                TURN_L <= PUSHBUTTON(1);
-                LED <= "0100";
+                s_TURN_R <= PUSHBUTTON(3); 
+                s_TURN_L <= PUSHBUTTON(1);
+                s_LED <= "0100";
             when S3 => -- Left
-                TURN_R <= PUSHBUTTON(0); 
-                TURN_L <= PUSHBUTTON(2);
-                LED <= "1000";
+                s_TURN_R <= PUSHBUTTON(0); 
+                s_TURN_L <= PUSHBUTTON(2);
+                s_LED <= "1000";
+            when others =>
+                s_TURN_R <= '0'; 
+                s_TURN_L <= '0';
+                s_LED <= "0000";
         end case;
     end if;
   end process output_decod;

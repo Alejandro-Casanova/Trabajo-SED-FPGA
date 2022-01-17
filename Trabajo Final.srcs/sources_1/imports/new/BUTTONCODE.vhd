@@ -62,13 +62,14 @@ architecture Behavioral of button_processing is
                sync_out : out STD_LOGIC);
     end component synchrnzr;
 
-    signal async_in : std_logic_vector(3 downto 0);
-    signal sync_out : std_logic_vector(3 downto 0);
-    signal edge_out : std_logic_vector(3 downto 0);
-    signal debounced_out : std_logic_vector(3 downto 0);
+    signal async_in      : std_logic_vector(3 downto 0) := (others => '0');
+    signal sync_out      : std_logic_vector(3 downto 0) := (others => '0');
+    signal edge_out      : std_logic_vector(3 downto 0) := (others => '0');
+    signal debounced_out : std_logic_vector(3 downto 0) := (others => '0');
 begin
 
     async_in <= (LEFT & DOWN & RIGHT & UP);
+    BCODE <= debounced_out;
     
     components : for i in BCODE'range generate
         sync_comp : synchrnzr 
@@ -86,7 +87,7 @@ begin
                          deadTime_ns => 1000000 )
             port map( pulse_in => edge_out(i),
                       clk => CLK,
-                      pulse_out => BCODE(i)
+                      pulse_out => debounced_out(i)
             );
 
     end generate;

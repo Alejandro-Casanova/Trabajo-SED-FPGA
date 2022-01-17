@@ -32,18 +32,22 @@ use IEEE.STD_LOGIC_1164.ALL;
 --use UNISIM.VComponents.all;
 
 entity synchrnzr is
-    Port ( clk : in STD_LOGIC;
+    Port ( clk      : in STD_LOGIC;
            async_in : in STD_LOGIC;
            sync_out : out STD_LOGIC);
 end synchrnzr;
 
 architecture Behavioral of synchrnzr is
-    signal sreg : std_logic_vector(1 downto 0);
+    signal sreg       : std_logic_vector(1 downto 0) := (others => '0');
+    signal s_sync_out : std_logic := '0';
 begin
+
+    sync_out <= s_sync_out;
+    
     process (CLK)
     begin
         if rising_edge(CLK) then
-            sync_out <= sreg(1);
+            s_sync_out <= sreg(1);
             sreg <= sreg(0) & async_in;
         end if;
     end process;

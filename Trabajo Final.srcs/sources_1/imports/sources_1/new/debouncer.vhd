@@ -41,16 +41,19 @@ entity debouncer is
 end debouncer;
 
 architecture Behavioral of debouncer is
-
+    signal s_pulse_out : std_logic := '0';
 begin
+
+    pulse_out <= s_pulse_out;
+    
     process(CLK)
         constant max_count : integer := (clockFreq * deadTime_ns / 1000000000);
         variable counter : integer := max_count;
     begin
         if rising_edge(CLK) then
-            pulse_out <= '0';
+            s_pulse_out <= '0';
             if pulse_in = '1' and counter = max_count then
-                pulse_out <= '1';
+                s_pulse_out <= '1';
                 counter := 0;        
             elsif counter < max_count then
                 counter := counter + 1;

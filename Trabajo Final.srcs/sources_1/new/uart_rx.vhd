@@ -29,12 +29,13 @@ use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
 
 entity uart_rx is
-    generic (g_CLK_Freq : integer := 10000000;
+    generic (g_CLK_Freq : integer := 100000000;
              g_UART_Baud_Rate : integer := 115200
     );
     Port ( i_CLK            : in STD_LOGIC;
            i_RX_Serial      : in STD_LOGIC;
-           o_RX_Done        : out STD_LOGIC; -- Emits a pulse (during one clock cycle) when reception is over and parallel bus can be read
+           o_RX_Done        : out STD_LOGIC; -- Emits a pulse (during one clock cycle) 
+                                             -- when reception is over and parallel bus can be read
            o_RX_Parallel    : out STD_LOGIC_VECTOR (7 downto 0)
            );
 end uart_rx;

@@ -49,7 +49,7 @@ architecture Behavioral of tb_uart_rx is
     
     -- Test Bench uses a 10 MHz Clock
     -- Want to interface to 115200 baud UART
-    constant c_CLK_FREQ : integer := 10000000;
+    constant c_CLK_FREQ : integer := 100000000;
     constant c_UART_BAUD_RATE : integer := 115200;
     
     constant c_BIT_PERIOD : time := 8680 ns; -- (1 / c_UART_BAUD_RATE)
@@ -99,7 +99,7 @@ begin
             o_RX_PARALLEL   => w_RX_PARALLEL
         );
 
-    r_CLOCK <= not r_CLOCK after 50 ns; -- Clk signal for 10 MHz
+    r_CLOCK <= not r_CLOCK after 5 ns; -- Clk signal for 100 MHz
     
     stimuli : process 
     begin   

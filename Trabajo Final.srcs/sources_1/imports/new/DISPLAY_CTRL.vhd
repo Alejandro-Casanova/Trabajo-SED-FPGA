@@ -37,7 +37,7 @@ architecture Behavioral of display_ctrl is
     
     constant max_clk_count : natural := clk_freq / refresh_freq / n_digits; -- Ticks for each digit to stay on
     --signal clk_count : positive := 0; -- Counter for clk ticks
-    signal digit_index : natural range 0 to n_digits - 1 := 0;
+    signal digit_index : natural range 0 to (n_digits - 1) := 0;
 
 begin
     -- Stores the value in integer form
@@ -54,11 +54,15 @@ begin
     digit <= digits(digit_index) when RST_N = '1' else 
              0;
     -- Selects current digit selection line
-    digsel_n <= (digit_index => '0', others => '1') when RST_N = '1' else 
-              (others => '1');
+    select_digit : for i in 0 to n_digits - 1 generate
+        digsel_n(i) <= '0' when digit_index = i and RST_N = '1' else '1';
+    end generate;
+    -- No sintetizable:
+    --digsel_n <= (digit_index => '0', others => '1') when RST_N = '1' else 
+    --          (others => '1');
     
     digit_select : process(CLK , RST_N)
-        variable clk_count : positive := 0;
+        variable clk_count : natural := 0;
     begin
         if RST_N = '0' then
             clk_count := 0;

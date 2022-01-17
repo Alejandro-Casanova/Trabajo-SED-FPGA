@@ -44,11 +44,11 @@ architecture Behavioral of uart_tx is
                    s_TX_Stop_Bit, s_Cleanup);
     signal r_FSM : t_FSM := s_Idle;
  
-    signal r_Clk_Count : integer range 0 to c_CLKS_PER_BIT - 1 := 0;
-    signal r_Bit_Index : integer range 0 to 7 := 0;  -- 8 Bits Total
+    signal r_Clk_Count : natural range 0 to c_CLKS_PER_BIT - 1 := 0;
+    signal r_Bit_Index : natural range 0 to 7 := 0;  -- 8 Bits Total
     signal r_TX_Byte   : std_logic_vector(7 downto 0) := (others => '0');
     signal r_TX_Done   : std_logic := '0';
-    
+    signal r_TX_Serial : std_logic := '1';
 begin
 
     p_UART_TX : process (i_Clk)
@@ -57,7 +57,7 @@ begin
             case r_FSM is
             
                 when s_Idle =>
-                    o_TX_Serial <= '1';    -- Drive Line High for Idle
+                    r_TX_Serial <= '1';    -- Drive Line High for Idle
                     r_TX_Done   <= '0';
                     r_Clk_Count <= 0;
                     r_Bit_Index <= 0;
@@ -71,7 +71,7 @@ begin
                     
                 -- Send out Start Bit. Start bit = 0
                 when s_TX_Start_Bit =>
-                    o_TX_Serial <= '0';
+                    r_TX_Serial <= '0';
                     
                     -- Wait g_CLKS_PER_BIT-1 clock cycles for start bit to finish
                     if r_Clk_Count < c_CLKS_PER_BIT - 1 then
@@ -84,7 +84,7 @@ begin
                     
                 -- Send all Data bits      
                 when s_TX_Data_Bits =>
-                    o_TX_Serial <= r_TX_Byte(r_Bit_Index); -- Writes current bit on serial line
+                    r_TX_Serial <= r_TX_Byte(r_Bit_Index); -- Writes current bit on serial line
                 
                     if r_Clk_Count < c_CLKS_PER_BIT - 1 then -- Waits 1 UART cycle
                         r_Clk_Count <= r_Clk_Count + 1;
@@ -104,7 +104,7 @@ begin
           
                 -- Send Stop bit.  Stop bit = 1
                 when s_TX_Stop_Bit =>
-                    o_TX_Serial <= '1';
+                    r_TX_Serial <= '1';
                 
                     -- Wait CLKS_PER_BIT - 1 clock cycles for Stop bit to finish
                     if r_Clk_Count < c_CLKS_PER_BIT - 1 then
@@ -129,5 +129,6 @@ begin
     end process;
     
     o_TX_Done <= r_TX_Done;
+    o_TX_Serial <= r_TX_Serial;
     
 end Behavioral;
