@@ -126,9 +126,13 @@ begin
                     if r_Clk_Count < c_CLKS_PER_BIT - 1 then
                         r_Clk_Count <= r_Clk_Count + 1;
                         r_FSM       <= s_RX_Stop_Bit;
-                    else -- Stop Bit Arrives (Doesn't check)
-                        r_Clk_Count <= 0;
-                        r_FSM   <= s_Cleanup;
+                    else -- Stop Bit Arrives
+                        if r_RX_Serial_Data = '1' then -- Checks serial data is 1
+                            r_Clk_Count <= 0;
+                            r_FSM   <= s_Cleanup;
+                        else
+                            r_FSM   <= s_Idle; -- Restart communication, stop condition failed
+                        end if;
                     end if;
      
                 -- Stay here 1 clock

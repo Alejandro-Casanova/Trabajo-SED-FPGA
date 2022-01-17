@@ -40,7 +40,6 @@ architecture tb of tb_debouncer is
 
     constant TbPeriod : time := 10 ns; -- Reloj de 100 MHz
     signal TbClock : std_logic := '0';
-    signal TbSimEnded : std_logic := '0';
 
 begin
 
@@ -50,9 +49,7 @@ begin
               pulse_out => pulse_out);
 
     -- Clock generation
-    TbClock <= not TbClock after TbPeriod/2 when TbSimEnded /= '1' else '0';
-
-    -- EDIT: Check that CLK is really your main clock signal
+    TbClock <= not TbClock after TbPeriod/2;
     CLK <= TbClock;
 
     stimuli : process
@@ -82,10 +79,8 @@ begin
         wait for 2 * TbPeriod;
         pulse_in <= '0';
         wait for 100 * TbPeriod;
-
-        -- Stop the clock and hence terminate the simulation
-        TbSimEnded <= '1';
-        wait;
+        
+        assert false report "Test Complete" severity failure;
     end process;
 
 end tb;

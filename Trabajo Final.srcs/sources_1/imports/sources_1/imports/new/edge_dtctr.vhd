@@ -48,7 +48,7 @@ begin
     end process;
     
     with sreg select
-        EDGE <= '1' when "100",
+        EDGE <= '1' when "001",
         '0' when others;
 
 end Behavioral;
