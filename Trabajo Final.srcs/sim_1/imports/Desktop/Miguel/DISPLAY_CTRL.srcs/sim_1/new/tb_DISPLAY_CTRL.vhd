@@ -35,6 +35,7 @@ architecture tb of tb_display_ctrl is
 begin
 
     uut : display_ctrl
+    generic map ( refresh_freq => 90 )
     port map (CLK       => CLK,
               RST_N     => RST_N,
               value     => value,

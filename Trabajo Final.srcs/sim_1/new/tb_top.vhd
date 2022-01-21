@@ -8,7 +8,7 @@ end tb_top;
 architecture tb of tb_top is
 
     component top
-        port (RESET        : in std_logic;
+        port (RESET_N        : in std_logic;
               CLK          : in std_logic;
               PUSHBUTTON_L : in std_logic;
               PUSHBUTTON_R : in std_logic;
@@ -18,7 +18,7 @@ architecture tb of tb_top is
               PULSE_OUT_R  : out std_logic;
               PULSE_OUT_L  : out std_logic;
               STATE_LED    : out std_logic_vector (3 downto 0);
-              DIGSEL_N     : out std_logic_vector (2 downto 0);
+              DIGSEL_N     : out std_logic_vector (7 downto 0);
               SEGMENT_N    : out std_logic_vector (6 downto 0));
     end component;
     
@@ -33,7 +33,7 @@ architecture tb of tb_top is
                o_TX_Done        : out STD_LOGIC); -- Sends pulse to signal transmition end
     end component uart_tx;
 
-    signal RESET        : std_logic;
+    signal RESET_N        : std_logic;
     signal CLK          : std_logic;
     signal PUSHBUTTON_L : std_logic;
     signal PUSHBUTTON_R : std_logic;
@@ -43,7 +43,7 @@ architecture tb of tb_top is
     signal PULSE_OUT_R  : std_logic;
     signal PULSE_OUT_L  : std_logic;
     signal STATE_LED    : std_logic_vector (3 downto 0);
-    signal DIGSEL_N     : std_logic_vector (2 downto 0);
+    signal DIGSEL_N     : std_logic_vector (7 downto 0);
     signal SEGMENT_N    : std_logic_vector (6 downto 0);
     
     signal TX_START     : std_logic := '0';
@@ -64,7 +64,7 @@ begin
         );
     
     uut : top
-    port map (RESET        => RESET,
+    port map (RESET_N      => RESET_N,
               CLK          => CLK,
               PUSHBUTTON_L => PUSHBUTTON_L,
               PUSHBUTTON_R => PUSHBUTTON_R,
@@ -84,7 +84,7 @@ begin
     stimuli : process
     begin
         -- EDIT Adapt initialization as needed
-        RESET <= '0';
+        RESET_N <= '1';
         PUSHBUTTON_L <= '0';
         PUSHBUTTON_R <= '0';
         PUSHBUTTON_U <= '0';
@@ -111,20 +111,20 @@ begin
         wait for TbPeriod * 1000;
         
         -- Send points
-        TX_PARALLEL <= std_logic_vector(to_unsigned(123, 8));
+        TX_PARALLEL <= std_logic_vector(to_unsigned(11, 8));
         TX_START <= '1';
         wait for TbPeriod;
         TX_START <= '0';
         wait until rising_edge(TX_DONE);
         
         -- Check display
-        wait for 100 ms; 
+        wait for 30 ms; 
 
         -- Reset generation
         -- EDIT: Check that RESET is really your reset signal
-        RESET <= '1';
+        RESET_N <= '0';
         wait for TbPeriod * 1000;
-        RESET <= '0';
+        RESET_N <= '1';
         wait for TbPeriod * 100;
 
         assert false report "Test Complete" severity failure;

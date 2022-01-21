@@ -37,9 +37,9 @@ end tb_uart_rx;
 
 architecture Behavioral of tb_uart_rx is
     component uart_rx is
-        generic (g_CLK_Freq : integer := 100000000;
-                 g_UART_Baud_Rate : integer := 115000
-        );
+        --generic (g_CLK_Freq : integer := 100000000;
+        --         g_UART_Baud_Rate : integer := 115000
+        --);
         Port ( i_CLK            : in STD_LOGIC;
                i_RX_Serial      : in STD_LOGIC;
                o_RX_Done        : out STD_LOGIC; -- Emits a pulse (during one clock cycle) when reception is over and parallel bus can be read
@@ -47,7 +47,7 @@ architecture Behavioral of tb_uart_rx is
                );
     end component uart_rx;
     
-    -- Test Bench uses a 10 MHz Clock
+    -- Test Bench uses a 100 MHz Clock
     -- Want to interface to 115200 baud UART
     constant c_CLK_FREQ : integer := 100000000;
     constant c_UART_BAUD_RATE : integer := 115200;
@@ -88,10 +88,6 @@ begin
 
     -- Instantiate UART Receiver
     uut : uart_rx
-        generic map(
-            g_CLK_Freq => c_CLK_FREQ,
-            g_UART_Baud_Rate => c_UART_BAUD_RATE
-        )
         port map (
             i_CLK           => r_CLOCK,
             i_RX_SERIAL     => r_RX_SERIAL,

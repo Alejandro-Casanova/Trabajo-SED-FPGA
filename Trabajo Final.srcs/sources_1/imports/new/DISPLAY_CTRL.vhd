@@ -33,7 +33,7 @@ architecture Behavioral of display_ctrl is
     signal digit : digit_type;  --holds the number currently being shown
     signal digits : digits_type;   --holds the complete decimal number
     
-    signal int_value : natural range 0 to (10**n_digits - 1) := 0; -- Holds the input value in integer form
+    signal int_value : natural range 0 to (2**n_bits - 1) := 0; -- Holds the input value in integer form
     
     constant max_clk_count : natural := clk_freq / refresh_freq / n_digits; -- Ticks for each digit to stay on
     --signal clk_count : positive := 0; -- Counter for clk ticks
@@ -46,7 +46,7 @@ begin
       
     -- Splits int_value into units, tens, hundreds...           
     digit_partition : for i in (n_digits - 1) downto 0 generate
-        digits(i) <= int_value mod (10**(i + 1)) / (10**i) when RST_N = '1' else
+        digits(i) <= (int_value mod (10**(i + 1))) / (10**i) when RST_N = '1' else
         0; 
     end generate;   
     

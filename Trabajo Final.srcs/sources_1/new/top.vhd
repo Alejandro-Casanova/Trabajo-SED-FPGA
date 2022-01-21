@@ -32,7 +32,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 --use UNISIM.VComponents.all;
 
 entity top is
-    Port ( RESET        : in std_logic;
+    Port ( RESET_N        : in std_logic;
            CLK          : in std_logic;    
            PUSHBUTTON_L : in std_logic;
            PUSHBUTTON_R : in std_logic;
@@ -42,8 +42,10 @@ entity top is
            PULSE_OUT_R  : out std_logic;
            PULSE_OUT_L  : out std_logic;
            STATE_LED    : out std_logic_vector(3 downto 0);
-           DIGSEL_N     : out std_logic_vector(2 downto 0);
-           SEGMENT_N    : out std_logic_vector(6 downto 0)
+           DIGSEL_N     : out std_logic_vector(7 downto 0);
+           SEGMENT_N    : out std_logic_vector(6 downto 0);
+           REG_LED      : out std_logic_vector(7 downto 0);
+           UART_ERR_LED : out std_logic
     );
 end top;
 
@@ -84,7 +86,8 @@ architecture Behavioral of top is
                i_RX_Serial      : in STD_LOGIC;
                o_RX_Done        : out STD_LOGIC; -- Emits a pulse (during one clock cycle) 
                                                  -- when reception is over and parallel bus can be read
-               o_RX_Parallel    : out STD_LOGIC_VECTOR (7 downto 0)
+               o_RX_Parallel    : out STD_LOGIC_VECTOR (7 downto 0);
+               o_RX_Error       : out std_logic
                );
     end component uart_rx; 
     
@@ -116,7 +119,9 @@ architecture Behavioral of top is
 begin
     
     s_Clk <= CLK;
-    s_Reset_n <= not RESET;
+    REG_LED <= s_Parallel_Data_UART;
+    s_Reset_n <= RESET_N;
+    DIGSEL_N(7 downto 3) <= (others => '1');
     
     u1_btnprcss : button_processing
         port map(  UP    => PUSHBUTTON_U,
@@ -140,7 +145,8 @@ begin
         port map( i_CLK         => s_Clk,
                   i_RX_Serial   => SERIAL_IN,
                   o_RX_Done     => s_RX_Done,
-                  o_RX_Parallel => s_Parallel_Data_UART
+                  o_RX_Parallel => s_Parallel_Data_UART,
+                  o_RX_Error    => UART_ERR_LED
         );
         
     u4_reg : count_reg
@@ -152,10 +158,11 @@ begin
         );             
     
     u5_dspl_ctrl : display_ctrl
+        generic map ( refresh_freq => 90 ) -- Hz
         port map( CLK       => s_Clk,
                   RST_N     => s_reset_n,
                   value     => s_Parallel_Data_Reg,
-                  digsel_n  => DIGSEL_N,
+                  digsel_n  => DIGSEL_N(2 downto 0),
                   segment_n => SEGMENT_N
         );
         

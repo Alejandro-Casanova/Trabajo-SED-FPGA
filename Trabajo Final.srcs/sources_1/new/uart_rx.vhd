@@ -36,7 +36,8 @@ entity uart_rx is
            i_RX_Serial      : in STD_LOGIC;
            o_RX_Done        : out STD_LOGIC; -- Emits a pulse (during one clock cycle) 
                                              -- when reception is over and parallel bus can be read
-           o_RX_Parallel    : out STD_LOGIC_VECTOR (7 downto 0)
+           o_RX_Parallel    : out STD_LOGIC_VECTOR (7 downto 0);
+           o_RX_Error       : out STD_LOGIC
            );
 end uart_rx;
 
@@ -61,6 +62,7 @@ architecture Behavioral of uart_rx is
     signal r_Bit_Index : integer range 0 to 7 := 0; -- Keeps count of which bit is being read
     signal r_RX_Byte   : std_logic_vector(7 downto 0) := (others => '0'); -- Saves the whole byte being read
     signal r_RX_Done   : std_logic := '0';
+    signal r_RX_Error  : std_logic := '0';
     
 begin
     -- The synchronizer samples the input serial data allowing its use 
@@ -98,7 +100,8 @@ begin
                             r_Clk_Count <= 0;  -- reset counter since we found the middle
                             r_FSM   <= s_RX_Data_Bits;
                         else
-                            r_FSM   <= s_Idle; -- Restart communication, start condition failed
+                            r_FSM      <= s_Idle; -- Restart communication, start condition failed
+                            r_RX_Error <= '1'; -- Signal ERROR
                         end if;    
                     end if;         
           
@@ -132,7 +135,8 @@ begin
                             r_Clk_Count <= 0;
                             r_FSM   <= s_Cleanup;
                         else
-                            r_FSM   <= s_Idle; -- Restart communication, stop condition failed
+                            r_FSM      <= s_Idle; -- Restart communication, stop condition failed
+                            r_RX_Error <= '1';    -- Signal ERROR
                         end if;
                     end if;
      
@@ -140,6 +144,7 @@ begin
                 when s_Cleanup =>
                     r_FSM   <= s_Idle;
                     r_RX_Done   <= '1'; -- Signal operation finished with a pulse
+                    r_RX_Error  <= '0';
                 
                 when others =>
                     r_FSM <= s_Idle;
@@ -150,4 +155,6 @@ begin
     
     o_RX_Done       <= r_RX_Done;
     o_RX_Parallel   <= r_RX_Byte;
+    o_RX_Error      <= r_RX_Error;
+    
 end Behavioral;
