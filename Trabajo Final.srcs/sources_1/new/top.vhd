@@ -142,6 +142,7 @@ begin
         );
         
     u3_uart : uart_rx
+        generic map ( g_UART_Baud_Rate => 9600 )
         port map( i_CLK         => s_Clk,
                   i_RX_Serial   => SERIAL_IN,
                   o_RX_Done     => s_RX_Done,
